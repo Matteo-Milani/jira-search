@@ -18,11 +18,11 @@ class MergeError(Exception):
 
 class JiraItem:
     def __init__(self) -> None:
-        self.id: str
-        self.key: str
-        self.timeSpent: int
-        self.status: str
-        self.summary: str
+        self.id: str = ""
+        self.key: str = ""
+        self.timeSpent: int = 0
+        self.status: str = ""
+        self.summary: str = ""
 
 
 class JiraPage:
@@ -44,7 +44,7 @@ class JIRAContentProvider:
         self._auth = HTTPBasicAuth(userName, password)
         self._pageSize = 50
 
-    def search(self, jql: str, start: int = 0) -> List[JiraPage]:
+    def search(self, jql: str, start: int = 0) -> JiraPage:
         url = f"{self._baseUrl}/rest/api/latest/search?maxResults={self._pageSize}&startAt={start}&jql={jql}"
         #print(f"  [JIRA] Searching tasks: {url}")
 
@@ -64,7 +64,10 @@ class JIRAContentProvider:
             item: JiraItem = JiraItem()
             item.id = issue["id"]
             item.key = issue["key"]
-            item.timeSpent = issue["fields"]["timespent"]
+
+            if issue["fields"]["timespent"] is not None:
+                item.timeSpent = issue["fields"]["timespent"]
+
             item.summary = issue["fields"]["summary"]
             item.status = issue["fields"]["status"]["name"]
             jiraPage.items.append(item)
