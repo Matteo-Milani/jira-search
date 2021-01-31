@@ -23,6 +23,8 @@ class JiraItem:
         self.timeSpent: int = 0
         self.status: str = ""
         self.summary: str = ""
+        self.accountId: int = 0
+        self.accountName: str = ""
 
 
 class JiraPage:
@@ -70,6 +72,9 @@ class JIRAContentProvider:
 
             item.summary = issue["fields"]["summary"]
             item.status = issue["fields"]["status"]["name"]
+
+            item.accountId = issue["fields"]["customfield_10009"]["id"]
+            item.accountName = issue["fields"]["customfield_10009"]["value"]
             jiraPage.items.append(item)
 
         if start + self._pageSize < jiraPage.total:
